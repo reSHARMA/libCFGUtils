@@ -3,6 +3,7 @@
 #include "llvm/IR/CFG.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instruction.h"
+#include "llvm/IR/Instructions.h"
 #include "string"
 #include "vector"
 
@@ -41,4 +42,24 @@ std::vector<llvm::Instruction*> GetPred(llvm::Instruction* Inst) {
     return Result;
 }
 
-} 
+std::vector<llvm::Instruction*> GetSucc(llvm::Instruction* Inst) {
+    std::vector<llvm::Instruction*> Result;
+    llvm::BasicBlock* Parent = Inst->getParent();
+    if (&Parent->back() == Inst) {
+        for (llvm::BasicBlock* BB : successors(Parent)) {
+            Result.push_back(&BB->front());
+        }
+    } else {
+        Result.push_back(Inst->getNextNonDebugInstruction());
+    }
+    return Result;
+}
+
+int getPointerOperandIndex(llvm::Instruction* Inst) {
+    if (llvm::LoadInst* LI = llvm::dyn_cast<llvm::LoadInst>(Inst))
+        return LI->getPointerOperandIndex();
+    if (llvm::StoreInst* SI = llvm::dyn_cast<llvm::StoreInst>(Inst))
+        return SI->getPointerOperandIndex();
+    return -1;
+}
+}  // namespace CFGUtils

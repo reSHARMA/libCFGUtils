@@ -10,6 +10,8 @@ namespace CFGUtils {
 void InstNamer(llvm::Function &F);
 bool SkipFunction(llvm::Function &F);
 std::vector<llvm::Instruction *> GetPred(llvm::Instruction *);
+std::vector<llvm::Instruction *> GetSucc(llvm::Instruction *);
+int getPointerOperandIndex(llvm::Instruction*);
 
 }
 #endif
